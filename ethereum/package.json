@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "name": "tfe-contracts",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "author": "Philippe Schommers <philippe@schommers.be>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@openzeppelin/truffle-upgrades": "^1.5.0",
+    "@truffle/hdwallet-provider": "^1.2.2",
+    "dotenv": "^8.2.0",
+    "truffle": "^5.2.3"
+  },
+  "devDependencies": {
+    "truffle-plugin-verify": "^0.5.6"
+  }
+}
