@@ -1,29 +1,28 @@
 syntax = "proto3";
 
 message TimestampedMessage {
-  // TODO: Replace with google.protobuf.Timestamp
-  required string date = 1;
+  required uint32 date = 1;
   oneof data {
     DataPoint dataPoint = 2;
   }
 }
 
 message SignedData {
-    required bytes source = 1;
-    required bytes signature = 2;
-    required TimestampedMessage data = 3;
+  required bytes source = 1;
+  required bytes signature = 2;
+  required TimestampedMessage data = 3;
 }
 
 message DataPoint {
-    required bytes previous = 1;
-    required double temperature = 2;
-    optional double humidity = 3;
+  required bytes previous = 1;
+  required sint32 temperature = 2;
+  optional uint32 humidity = 3;
 }
 
 message Request {
   required string channel = 1;
   message Query {
-    required string device = 1;
+    required bytes device = 1;
     required string from = 2;
     required string to = 3;
   }

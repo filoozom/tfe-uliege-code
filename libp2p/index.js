@@ -24,7 +24,7 @@ const Proto = (peerId, root) => {
 
   const encodeTimestampedMessage = (type, data) =>
     TimestampedMessage.create({
-      date: new Date().toISOString(),
+      date: Math.round(Date.now() / 1000),
       [type]: data,
     });
 
@@ -58,8 +58,8 @@ const Proto = (peerId, root) => {
 
   const data = await proto.encodeDataPoint({
     previous,
-    temperature: 36.56,
-    humidity: 0.459,
+    temperature: 365,
+    humidity: 459,
   });
 
   const { SignedData } = root;
