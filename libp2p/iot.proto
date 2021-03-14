@@ -23,7 +23,7 @@ message Request {
   required string channel = 1;
   message Query {
     required bytes device = 1;
-    required string from = 2;
-    required string to = 3;
+    required uint32 from = 2;
+    required uint32 to = 3;
   }
 }
