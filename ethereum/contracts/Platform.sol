@@ -3,8 +3,9 @@
 pragma solidity ^0.8.0;
 
 contract Platform {
-    uint256 constant LOCATION_MULTIPLIER = 10**6;
-    uint256 constant DATA_PRECISION = 10;
+    // Configuration
+    uint256 public immutable LOCATION_MULTIPLIER;
+    uint256 public immutable DATA_PRECISION;
 
     // 6 decimal points precision
     struct Coordinates {
@@ -12,7 +13,7 @@ contract Platform {
         int32 longitude;
     }
 
-    struct Node {
+    struct Device {
         address owner;
         address id;
         Coordinates coordinates;
@@ -27,17 +28,38 @@ contract Platform {
     }
 
     event NewDevice(address owner, address id);
-    event NewDataPoint(address id, DataPoint data);
+    event NewDataPoint(DataPoint data);
 
-    Node[] nodes;
+    Device[] devices;
+    mapping(address => Device) deviceMap;
     mapping(address => DataPoint[]) dataPoints;
 
+    constructor(uint256 locationMultiplier, uint256 dataPrecision) {
+        LOCATION_MULTIPLIER = locationMultiplier;
+        DATA_PRECISION = dataPrecision;
+    }
+
     function register(address id, Coordinates memory coordinates) public {
-        nodes.push(Node({owner: msg.sender, id: id, coordinates: coordinates}));
+        require(
+            deviceMap[msg.sender].owner == address(0),
+            "This device is already registered"
+        );
+
+        Device memory device =
+            Device({owner: msg.sender, id: id, coordinates: coordinates});
+
+        devices.push(device);
+        deviceMap[id] = device;
+
         emit NewDevice(msg.sender, id);
     }
 
     function publish(int16 temperature, uint16 humidity) public {
+        require(
+            deviceMap[msg.sender].owner != address(0),
+            "This device is not registered"
+        );
+
         DataPoint memory dataPoint =
             DataPoint({
                 id: msg.sender,
@@ -47,60 +69,62 @@ contract Platform {
             });
 
         dataPoints[msg.sender].push(dataPoint);
-        emit NewDataPoint(msg.sender, dataPoint);
+        emit NewDataPoint(dataPoint);
     }
 
     function fetchData(
         address id,
         uint256 from,
         uint256 to,
-        uint16 limit
-    ) public view returns (DataPoint[] memory) {
+        uint16 limit,
+        uint256 start
+    ) public view returns (DataPoint[] memory result, uint256 lastIndex) {
+        result = new DataPoint[](limit);
+        lastIndex = start;
+
         DataPoint[] memory points = dataPoints[id];
-        DataPoint[] memory result = new DataPoint[](limit);
         uint16 j = 0;
 
         // This is extremely naïve and should be replaced with
         // something more efficient like binary search.
-        for (uint256 i = 0; i < points.length && j < limit; i++) {
-            DataPoint memory point = points[i];
+        for (; lastIndex < points.length && j < limit; lastIndex++) {
+            DataPoint memory point = points[lastIndex];
             if (point.timestamp >= from && point.timestamp < to) {
-                result[j] = points[i];
-                j++;
+                result[j++] = points[lastIndex];
             }
         }
 
-        return result;
+        return (result, lastIndex);
     }
 
     // Call with "from" on upper left and "to" on bottom right
-    function locateNodes(
+    function locateDevices(
         Coordinates memory from,
         Coordinates memory to,
         uint16 limit,
         uint256 start
-    ) public view returns (Node[] memory, uint256) {
-        Node[] memory result = new Node[](limit);
+    ) public view returns (Device[] memory result, uint256 lastIndex) {
+        result = new Device[](limit);
+        lastIndex = start;
+
         uint16 j = 0;
-        uint256 i = start;
 
         // This is extremely naïve too, and should be
         // replaced with something more efficient.
         // H3?
-        for (; i < nodes.length && j < limit; i++) {
-            Node memory node = nodes[i];
+        for (; lastIndex < devices.length && j < limit; lastIndex++) {
+            Device memory device = devices[lastIndex];
 
             if (
-                from.latitude <= node.coordinates.latitude &&
-                from.longitude <= node.coordinates.longitude &&
-                to.latitude >= node.coordinates.latitude &&
-                to.longitude >= node.coordinates.longitude
+                from.latitude <= device.coordinates.latitude &&
+                from.longitude <= device.coordinates.longitude &&
+                to.latitude >= device.coordinates.latitude &&
+                to.longitude >= device.coordinates.longitude
             ) {
-                result[j] = nodes[i];
-                j++;
+                result[j++] = device;
             }
         }
 
-        return (result, i);
+        return (result, lastIndex);
     }
 }
