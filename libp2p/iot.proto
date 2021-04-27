@@ -1,29 +1,29 @@
 syntax = "proto3";
 
 message TimestampedMessage {
-  required uint32 date = 1;
+  uint32 date = 1;
   oneof data {
     DataPoint dataPoint = 2;
   }
 }
 
 message SignedData {
-  required bytes source = 1;
-  required bytes signature = 2;
-  required TimestampedMessage data = 3;
+  bytes source = 1;
+  bytes signature = 2;
+  TimestampedMessage data = 3;
 }
 
 message DataPoint {
-  required bytes previous = 1;
-  required sint32 temperature = 2;
-  optional uint32 humidity = 3;
+  bytes previous = 1;
+  sint32 temperature = 2;
+  uint32 humidity = 3;
 }
 
 message Request {
-  required string channel = 1;
+  repeated string multiaddresses = 1;
   message Query {
-    required bytes device = 1;
-    required uint32 from = 2;
-    required uint32 to = 3;
+    bytes device = 1;
+    uint32 from = 2;
+    uint32 to = 3;
   }
 }
