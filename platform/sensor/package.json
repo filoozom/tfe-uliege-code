@@ -1,0 +1,12 @@
+{
+  "name": "node",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "Philippe Schommers <philippe@schommers.be>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "commander": "^7.2.0"
+  }
+}
