@@ -7,7 +7,7 @@ const { createNode } = require("./lib/libp2p");
 const { parseDirectory } = require("./lib/tools");
 
 // Protocols
-const publish = require("./protocols/publish");
+const ingest = require("./protocols/ingest");
 
 // Functions
 function getTemperature(buffer) {
@@ -20,14 +20,14 @@ function getHumidity(buffer) {
 
 async function start(options) {
   const node = await createNode(options);
-  const publisher = await publish.create(node, options.target);
+  const ingestor = await ingest.create(node, options.target);
 
   const server = net.createServer((socket) => {
     socket.on("data", (data) => {
       const temperature = getTemperature(data);
       const humidity = getHumidity(data);
 
-      publisher.publish({ temperature, humidity });
+      ingestor.publish({ temperature, humidity });
     });
   });
 

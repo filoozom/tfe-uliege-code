@@ -18,10 +18,9 @@ const lowerFirstLetter = (string) =>
   string.charAt(0).toLowerCase() + string.slice(1);
 
 const create = async (node, target) => {
-  const root = await load(path.join(__dirname, "publish.proto"));
-  const { SignedData, TimestampedMessage, DataPoint } = root;
-
-  const encodeDataPoint = (data) => DataPoint.create(data);
+  const { SignedData, TimestampedMessage, DataPoint } = await load(
+    path.join(__dirname, "../data.proto")
+  );
 
   const encodeTimestampedMessage = (type, data) =>
     TimestampedMessage.create({
@@ -43,7 +42,7 @@ const create = async (node, target) => {
   };
 
   const createSignedData = async (data) => {
-    const dataPoint = encodeDataPoint(data);
+    const dataPoint = DataPoint.create(data);
     const signedData = await encodeSignedData(dataPoint);
     return SignedData.encode(signedData).finish();
   };

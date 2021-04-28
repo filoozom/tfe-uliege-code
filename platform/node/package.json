@@ -8,6 +8,8 @@
   "license": "UNLICENSED",
   "dependencies": {
     "commander": "^7.2.0",
+    "fastify": "^3.15.0",
+    "fastify-autoload": "^3.7.1",
     "it-length-prefixed": "^5.0.2",
     "it-pipe": "^1.1.0",
     "libp2p": "^0.30.12",

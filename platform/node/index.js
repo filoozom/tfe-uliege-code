@@ -4,41 +4,42 @@ const { version } = require("./package.json");
 // Lib
 const { createNode } = require("./lib/libp2p");
 const { parseDirectory } = require("./lib/tools");
+const { create: createStore } = require("./store");
 
 // Protocols
-const request = require("./protocols/request");
-const publish = require("./protocols/publish");
+const ingest = require("./protocols/ingest");
+const sync = require("./protocols/sync");
+
+// API
+const api = require("./api");
 
 async function startNode(options) {
   console.log(options);
 
+  const store = await createStore(options.dataDir);
   const node = await createNode(options);
 
-  /*
-  node.on("peer:discovery", (peerId) => {
-    console.log("found peer:", peerId.toB58String());
-  });
+  // Protocols
+  const syncer = await sync.create(node);
+  await ingest.create(node, syncer);
 
-  node.connectionManager.on("peer:connect", (connection) => {
-    console.log("connected to:", connection.remotePeer.toB58String());
-  });
-  */
-
-  const publisher = await publish.create(node);
-
+  // Start the node
   await node.start();
-
-  const devices = ["a", "b", "c"];
-  const requester = await request.create(node);
-  for (const device of devices) {
-    requester.subscribe(device);
-  }
 
   // Output listen addresses to the console
   console.log("Listener ready, listening on:");
   node.multiaddrs.forEach((ma) => {
     console.log(ma.toString() + "/p2p/" + node.peerId.toB58String());
   });
+
+  // Launch the API
+  const app = await api.create({ store, syncer });
+  await app.listen(options.listenApi);
+
+  // Add subscriptions
+  for (const device of store.get("devices") || []) {
+    syncer.subscribe(device);
+  }
 }
 
 program
@@ -65,6 +66,12 @@ program
     "listen address for TCP connections (host and port)",
     "127.0.0.1:12300"
   )
+  .option(
+    "-a, --listen-api <ip:port>",
+    "listen address for the web API (host and port)",
+    "127.0.0.1:34500"
+  )
+
   .parse();
 
 startNode(program.opts());
