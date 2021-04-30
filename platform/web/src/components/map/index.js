@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useWindowSize } from "react-use";
 import {
   MapContainer,
@@ -53,7 +53,9 @@ function OnMove({ onMove }) {
   const map = useMapEvent("moveend", () => {
     onMove(map.getBounds());
   });
-  onMove(map.getBounds());
+  useEffect(() => {
+    onMove(map.getBounds());
+  }, []);
 }
 
 export default function Map({ devices = [], onRegister, onMove }) {
