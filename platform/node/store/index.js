@@ -5,11 +5,7 @@ const path = require("path");
 const STORE_FILE = "store.json";
 
 // Cache
-const DEFAULT_STORE = {
-  subscriptions: {
-    devices: [],
-  },
-};
+const DEFAULT_STORE = {};
 
 const readStore = async (file) => {
   try {

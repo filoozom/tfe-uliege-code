@@ -1,0 +1,108 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "locationMultiplier",
+        "type": "uint32"
+      },
+      { "internalType": "uint32", "name": "capacity", "type": "uint32" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "id",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          { "internalType": "int32", "name": "latitude", "type": "int32" },
+          { "internalType": "int32", "name": "longitude", "type": "int32" }
+        ],
+        "indexed": false,
+        "internalType": "struct Coordinates",
+        "name": "coordinates",
+        "type": "tuple"
+      }
+    ],
+    "name": "NewDevice",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "LOCATION_MULTIPLIER",
+    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          { "internalType": "int32", "name": "latitude", "type": "int32" },
+          { "internalType": "int32", "name": "longitude", "type": "int32" },
+          { "internalType": "int32", "name": "width", "type": "int32" },
+          { "internalType": "int32", "name": "height", "type": "int32" }
+        ],
+        "internalType": "struct Rectangle",
+        "name": "range",
+        "type": "tuple"
+      },
+      { "internalType": "uint256", "name": "limit", "type": "uint256" }
+    ],
+    "name": "find",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "bytes", "name": "id", "type": "bytes" },
+          {
+            "components": [
+              { "internalType": "int32", "name": "latitude", "type": "int32" },
+              { "internalType": "int32", "name": "longitude", "type": "int32" }
+            ],
+            "internalType": "struct Coordinates",
+            "name": "coordinates",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Device[]",
+        "name": "devices",
+        "type": "tuple[]"
+      },
+      { "internalType": "uint256", "name": "count", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes", "name": "id", "type": "bytes" },
+      {
+        "components": [
+          { "internalType": "int32", "name": "latitude", "type": "int32" },
+          { "internalType": "int32", "name": "longitude", "type": "int32" }
+        ],
+        "internalType": "struct Coordinates",
+        "name": "coordinates",
+        "type": "tuple"
+      }
+    ],
+    "name": "register",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

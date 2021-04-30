@@ -9,22 +9,38 @@ const { create: createStore } = require("./store");
 // Protocols
 const ingest = require("./protocols/ingest");
 const sync = require("./protocols/sync");
+const syncDevices = require("./protocols/sync-devices");
 
 // API
 const api = require("./api");
 
 async function startNode(options) {
-  console.log(options);
-
   const store = await createStore(options.dataDir);
   const node = await createNode(options);
 
+  // Print peer discovery results
+  node.on("peer:discovery", (peerId) => {
+    console.log(`Found peer ${peerId.toB58String()}`);
+  });
+
+  // Print new connections to peers
+  node.connectionManager.on("peer:connect", (connection) => {
+    console.log(`Connected to ${connection.remotePeer.toB58String()}`);
+  });
+
+  // Print peers disconnecting
+  node.connectionManager.on("peer:disconnect", (connection) => {
+    console.log(`Disconnected from ${connection.remotePeer.toB58String()}`);
+  });
+
   // Protocols
   const syncer = await sync.create(node);
+  const deviceSyncer = await syncDevices.create(store);
   await ingest.create(node, syncer);
 
   // Start the node
   await node.start();
+  await deviceSyncer.start();
 
   // Output listen addresses to the console
   console.log("Listener ready, listening on:");

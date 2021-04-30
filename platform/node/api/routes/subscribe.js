@@ -1,3 +1,5 @@
+const KEY = "subscriptions:devices";
+
 module.exports = async (fastify) => {
   const { store, syncer } = fastify;
 
@@ -13,8 +15,8 @@ module.exports = async (fastify) => {
         },
       },
     },
-    async function () {
-      return fastify.store.get("devices") || [];
+    async () => {
+      return fastify.store.get(KEY) || [];
     }
   );
 
@@ -34,10 +36,10 @@ module.exports = async (fastify) => {
         },
       },
     },
-    async function ({ body: { device } }, res) {
+    async ({ body: { device } }, res) => {
       // Add to the store
-      const devices = store.get("devices") || [];
-      store.set("devices", [...devices, device]);
+      const devices = store.get(KEY) || [];
+      store.set(KEY, [...devices, device]);
       await store.save();
 
       // Subscribe to the device
@@ -49,7 +51,7 @@ module.exports = async (fastify) => {
   );
 
   fastify.delete(
-    "/:id",
+    "/:device",
     {
       schema: {
         response: {
@@ -57,12 +59,12 @@ module.exports = async (fastify) => {
         },
       },
     },
-    async function ({ params: { device } }, res) {
+    async ({ params: { device } }, res) => {
       // Remove from the store
-      const devices = store.get("devices") || [];
+      const devices = store.get(KEY) || [];
       store.set(
-        "devices",
-        devices.filter((device) => id !== device)
+        KEY,
+        devices.filter((id) => id !== device)
       );
       await store.save();
 
@@ -70,7 +72,7 @@ module.exports = async (fastify) => {
       syncer.unsubscribe(device);
 
       // Send a 201
-      res.status(201).send();
+      res.status(204);
     }
   );
 };
