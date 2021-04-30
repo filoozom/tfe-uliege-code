@@ -1,0 +1,35 @@
+@import "normalize.css";
+
+html,
+body {
+  font: 14px/1.21 "Helvetica Neue", arial, sans-serif;
+  font-weight: 400;
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+nav {
+  height: 60px;
+  background: #f3f3f3;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+}
+
+nav button {
+  color: #fff;
+  border-color: #f1bc31;
+  background: #f1bc31;
+  height: 40px;
+  margin: 10px;
+  padding: 0 20px;
+}
