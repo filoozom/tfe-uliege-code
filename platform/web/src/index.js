@@ -101,7 +101,7 @@ export default function App() {
 
     const contract = new ethers.Contract(address, abi, provider);
     let [devices] = await contract.find(
-      fromCoords([center.lat, center.lng, width, height]),
+      fromCoords([center.lat, center.lng, height, width]),
       100
     );
 
