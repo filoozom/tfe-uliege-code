@@ -9,7 +9,7 @@ struct Coordinates {
 
 struct Device {
     address owner;
-    string id;
+    bytes id;
     Coordinates coordinates;
 }
 
@@ -185,10 +185,10 @@ contract Platform {
         tree.capacity = 5;
     }
 
-    event NewDevice(address owner, string id, Coordinates coordinates);
-    mapping(string => Device) deviceMap;
+    event NewDevice(address owner, bytes id, Coordinates coordinates);
+    mapping(bytes => Device) deviceMap;
 
-    function register(string memory id, Coordinates memory coordinates) public {
+    function register(bytes memory id, Coordinates memory coordinates) public {
         require(
             deviceMap[id].owner == address(0),
             "This device is already registered"

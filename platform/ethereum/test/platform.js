@@ -3,6 +3,7 @@ require("dotenv").config();
 
 // Global
 const truffleAssert = require("truffle-assertions");
+const PeerId = require("peer-id");
 
 // Lib
 const { equalBigInt } = require("./lib/utils");
@@ -44,17 +45,23 @@ function assertDeviceCount({ devices, count }, expected) {
 }
 
 const loc = (number) => (number * LOCATION_MULTIPLIER).toString();
+const getPeerId = async () =>
+  "0x" + (await PeerId.create({ keyType: "secp256k1" })).toHexString();
 
-contract("Platform", (accounts) => {
+contract("Platform", async (accounts) => {
   // Accounts
   const OWNER_COUNT = 2;
   const DEVICE_COUNT = 3;
-  const owners = accounts.slice(1, 1 + OWNER_COUNT).map((account) => ({
-    account,
-    devices: Array(DEVICE_COUNT)
-      .fill(0)
-      .map(() => Math.random().toString(36).slice(2)),
-  }));
+  const owners = await Promise.all(
+    accounts.slice(1, 1 + OWNER_COUNT).map(async (account) => ({
+      account,
+      devices: await Promise.all(
+        Array(DEVICE_COUNT)
+          .fill(0)
+          .map(getPeerId)
+      ),
+    }))
+  );
 
   it("should contain basic constants", async () => {
     const instance = await Platform.deployed();
@@ -97,7 +104,7 @@ contract("Platform", (accounts) => {
     });
     assertSameDevice((await find).devices[1], {
       owner: "0x0000000000000000000000000000000000000000",
-      id: "",
+      id: "0x",
       coordinates: {
         latitude: "0",
         longitude: "0",
@@ -123,11 +130,15 @@ contract("Platform", (accounts) => {
     );
   });
 
-  it("should be possible to insert 20 nodes and find them", async () => {
+  it("should be possible to insert 20 nodes and find them", async function() {
+    this.timeout(30000);
+
     const owner = owners[0];
-    const devices = Array(20)
-      .fill(0)
-      .map(() => Math.random().toString(36).slice(2));
+    const devices = await Promise.all(
+      Array(20)
+        .fill(0)
+        .map(() => getPeerId())
+    );
 
     const instance = await Platform.deployed();
     const registrations = devices.map((device, index) => {
