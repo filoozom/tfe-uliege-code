@@ -1,5 +1,5 @@
 /* global ethereum */
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 
 // Style
 import "./style";
@@ -28,6 +28,7 @@ const connectWallet = () =>
   });
 
 export default function App() {
+  const locationRef = useRef();
   const [node, setNode] = useState();
   const [devices, setDevices] = useState();
   const [accounts, setAccounts] = useState();
@@ -85,16 +86,20 @@ export default function App() {
 
     try {
       const peerId = await PeerId.createFromB58String(id);
-      contract.register(`0x${peerId.toHexString()}`, fromCoords(coordinates), {
-        gasLimit: 2500000,
-      });
+      const result = await contract.register(
+        `0x${peerId.toHexString()}`,
+        fromCoords(coordinates)
+      );
+      await result.wait();
+      onMove();
     } catch (err) {
       console.log(err);
     }
   };
 
   // Search for devices in the map's current bounding box
-  const onMove = async (location) => {
+  const onMove = async (location = locationRef.current) => {
+    locationRef.current = location;
     const center = location.getCenter();
     const width = Math.abs((location.getEast() - location.getWest()) / 2);
     const height = Math.abs((location.getNorth() - location.getSouth()) / 2);
