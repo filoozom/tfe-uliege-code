@@ -22,8 +22,8 @@ struct Point {
 struct Rectangle {
     int32 latitude;
     int32 longitude;
-    int32 width;
     int32 height;
+    int32 width;
 }
 
 struct QuadTree {
@@ -40,10 +40,10 @@ library RectangleLib {
         returns (bool)
     {
         return
-            !(a.latitude - a.width > b.latitude + b.width ||
-                a.latitude + a.width < b.latitude - b.width ||
-                a.longitude - a.height > b.longitude + b.height ||
-                a.longitude + a.height < b.longitude - b.height);
+            !(a.latitude - a.height > b.latitude + b.height ||
+                a.latitude + a.height < b.latitude - b.height ||
+                a.longitude - a.width > b.longitude + b.width ||
+                a.longitude + a.width < b.longitude - b.width);
     }
 
     function contains(Rectangle memory rectangle, Point memory point)
@@ -52,10 +52,10 @@ library RectangleLib {
         returns (bool)
     {
         return
-            point.latitude <= rectangle.latitude + rectangle.width &&
-            point.latitude >= rectangle.latitude - rectangle.width &&
-            point.longitude <= rectangle.longitude + rectangle.height &&
-            point.longitude >= rectangle.longitude - rectangle.height;
+            point.latitude <= rectangle.latitude + rectangle.height &&
+            point.latitude >= rectangle.latitude - rectangle.height &&
+            point.longitude <= rectangle.longitude + rectangle.width &&
+            point.longitude >= rectangle.longitude - rectangle.width;
     }
 }
 
@@ -95,31 +95,31 @@ library QuadTreeLib {
         QuadTree storage self,
         int32 latitude,
         int32 longitude,
-        int32 width,
-        int32 height
+        int32 height,
+        int32 width
     ) internal {
         QuadTree storage tree = self.children.push();
 
         // Initialize the boundary
         tree.boundary.latitude = latitude;
         tree.boundary.longitude = longitude;
-        tree.boundary.width = width;
         tree.boundary.height = height;
+        tree.boundary.width = width;
 
         // Set the remaining properties
         tree.capacity = self.capacity;
     }
 
     function divide(QuadTree storage self) internal {
-        int32 x = self.boundary.latitude;
-        int32 y = self.boundary.longitude;
+        int32 lng = self.boundary.longitude;
+        int32 lat = self.boundary.latitude;
         int32 w = self.boundary.width;
         int32 h = self.boundary.height;
 
-        self.createChild(x + w / 2, y - h / 2, w / 2, h / 2);
-        self.createChild(x - w / 2, y - h / 2, w / 2, h / 2);
-        self.createChild(x + w / 2, y + h / 2, w / 2, h / 2);
-        self.createChild(x - w / 2, y + h / 2, w / 2, h / 2);
+        self.createChild(lat + h / 2, lng - w / 2, h / 2, w / 2);
+        self.createChild(lat - h / 2, lng - w / 2, h / 2, w / 2);
+        self.createChild(lat + h / 2, lng + w / 2, h / 2, w / 2);
+        self.createChild(lat - h / 2, lng + w / 2, h / 2, w / 2);
     }
 
     function query(
