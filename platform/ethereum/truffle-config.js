@@ -33,6 +33,7 @@ module.exports = {
           numberOfAddresses: 1,
           providerOrUrl: "http://srv02.apyos.com:8545",
           pollingInterval: 8000,
+          chainId: 5,
         }),
       network_id: 5,
       confirmations: 1,

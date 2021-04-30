@@ -169,11 +169,9 @@ contract Platform {
     QuadTree tree;
 
     uint32 public immutable LOCATION_MULTIPLIER;
-    uint32 public immutable DATA_PRECISION;
 
-    constructor(uint32 locationMultiplier, uint32 dataPrecision) {
+    constructor(uint32 locationMultiplier, uint32 capacity) {
         LOCATION_MULTIPLIER = locationMultiplier;
-        DATA_PRECISION = dataPrecision;
 
         // Setup tree
         tree.boundary = Rectangle(
@@ -182,7 +180,7 @@ contract Platform {
             180 * int32(locationMultiplier),
             360 * int32(locationMultiplier)
         );
-        tree.capacity = 5;
+        tree.capacity = capacity;
     }
 
     event NewDevice(address owner, bytes id, Coordinates coordinates);

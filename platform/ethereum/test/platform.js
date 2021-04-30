@@ -12,7 +12,7 @@ const { equalBigInt } = require("./lib/utils");
 const Platform = artifacts.require("Platform");
 
 // Constants
-const { LOCATION_MULTIPLIER, DATA_PRECISION } = process.env;
+const { LOCATION_MULTIPLIER } = process.env;
 
 // Functions
 function formatCoordinates({ latitude, longitude }) {
@@ -67,7 +67,6 @@ contract("Platform", async (accounts) => {
     const instance = await Platform.deployed();
 
     equalBigInt(await instance.LOCATION_MULTIPLIER.call(), LOCATION_MULTIPLIER);
-    equalBigInt(await instance.DATA_PRECISION.call(), DATA_PRECISION);
   });
 
   it("should be possible to register a node and find it", async () => {

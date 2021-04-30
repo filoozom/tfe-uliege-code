@@ -5,7 +5,7 @@ require("dotenv").config();
 const Platform = artifacts.require("Platform");
 
 module.exports = (deployer) => {
-  const { LOCATION_MULTIPLIER, DATA_PRECISION } = process.env;
+  const { LOCATION_MULTIPLIER, CAPACITY } = process.env;
 
-  deployer.deploy(Platform, LOCATION_MULTIPLIER, DATA_PRECISION);
+  deployer.deploy(Platform, LOCATION_MULTIPLIER, CAPACITY);
 };
