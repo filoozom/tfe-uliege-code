@@ -47,22 +47,15 @@ const create = async (node, store) => {
   // Requests
   const requestHandler = async ({ data, topicIDs }) => {
     console.log("Received request:", Request.decode(data));
-    const { id, channel, multiAddresses, query } = Request.decode(data);
+    const { id, multiAddresses, query } = Request.decode(data);
     const { device: deviceRaw, from, to } = query;
     const device = PeerId.createFromBytes(deviceRaw).toB58String();
     const validIds = topicIDs.map((id) => id.split(":")[2]);
     const mas = multiAddresses.map(multiaddr);
 
-    // Received an invalid request (wrong channel)
-    // TODO: Add location channels (as opposed to device specific ones)
+    // Received an invalid request (wrong topic)
+    // TODO: Add location topics (as opposed to device specific ones)
     if (!validIds.includes(device)) {
-      console.log("Invalid topic:", { validTopics: validIds, device });
-      return;
-    }
-
-    // TODO: Add support for pubsub requests
-    if (channel) {
-      console.log("Received channel request:", channel);
       return;
     }
 
@@ -95,6 +88,7 @@ const create = async (node, store) => {
       to: result[0].date,
     });
     const reply = Reply.create({ id, results });
+    const replyRaw = Reply.encode(reply).finish();
 
     // Check multi addresses
     let peerId;
@@ -135,7 +129,7 @@ const create = async (node, store) => {
 
     // Write the reply and end the stream
     const writer = await writeStream(stream);
-    writer.write(Reply.encode(reply).finish());
+    writer.write(replyRaw);
     writer.end();
 
     // Close both sides
