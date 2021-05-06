@@ -67,17 +67,7 @@ export default function App() {
       console.log(`Disconnected from ${connection.remotePeer.toB58String()}`);
     });
 
-    (async () => {
-      await node.start();
-
-      node.pubsub.on(
-        "device-16Uiu2HAm3N2xSLXyrd4hqZ8kVLcyr2okm82Cc8VXrQTdShnnyK5X",
-        console.log
-      );
-      await node.pubsub.subscribe(
-        "device-16Uiu2HAm3N2xSLXyrd4hqZ8kVLcyr2okm82Cc8VXrQTdShnnyK5X"
-      );
-    })();
+    node.start();
   }, [node]);
 
   // Register a device
@@ -127,7 +117,12 @@ export default function App() {
       <nav>
         <button onClick={connectWallet}>{account || "Connect wallet"}</button>
       </nav>
-      <Map devices={devices} onRegister={onRegister} onMove={onMove} />
+      <Map
+        devices={devices}
+        onRegister={onRegister}
+        onMove={onMove}
+        node={node}
+      />
     </div>
   );
 }

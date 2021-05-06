@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message DataPoint {
+  sint32 temperature = 1;
+  uint32 humidity = 2;
+}
+
+message TimestampedMessage {
+  uint32 date = 1;
+  oneof data {
+    DataPoint dataPoint = 2;
+  }
+}
+
+message SignedData {
+  bytes source = 1;
+  bytes signature = 2;
+  TimestampedMessage data = 3;
+}

@@ -8,7 +8,11 @@ import {
   useMapEvent,
 } from "react-leaflet";
 
+// Style
 import style from "./style";
+
+// Lib
+import { decodeSignedData } from "../../lib/data";
 
 const position = [50.586073694936566, 5.560206153520874];
 
@@ -58,7 +62,43 @@ function OnMove({ onMove }) {
   }, []);
 }
 
-export default function Map({ devices = [], onRegister, onMove }) {
+function DevicePopup({ device, node }) {
+  const [data, setData] = useState();
+
+  const handler = async ({ data }) => {
+    try {
+      const dataPoint = await decodeSignedData(data);
+      setData(dataPoint.data.dataPoint);
+    } catch (err) {
+      // Invalid data point
+      console.log(err);
+    }
+  };
+
+  const topic = `device-${device.id}`;
+  const onClose = () => node.pubsub.unsubscribe(topic);
+  const onOpen = () => {
+    console.log("Subscribing to", topic);
+    node.pubsub.on(topic, handler);
+    node.pubsub.subscribe(topic);
+  };
+
+  return (
+    <Popup onOpen={onOpen} onClose={onClose}>
+      <p>Owner: {device.owner}</p>
+      <p>ID: {device.id}</p>
+      {data && (
+        <p>
+          Temperature: {data.temperature / 10}°C
+          <br />
+          Humidity: {data.humidity / 10}°C
+        </p>
+      )}
+    </Popup>
+  );
+}
+
+export default function Map({ devices = [], onRegister, onMove, node }) {
   const { height } = useWindowSize();
 
   return (
@@ -71,10 +111,7 @@ export default function Map({ devices = [], onRegister, onMove }) {
 
         {devices.map((device) => (
           <Marker key={device.id} position={device.coordinates}>
-            <Popup>
-              <p>Owner: {device.owner}</p>
-              <p>ID: {device.id}</p>
-            </Popup>
+            <DevicePopup device={device} node={node} />
           </Marker>
         ))}
 
