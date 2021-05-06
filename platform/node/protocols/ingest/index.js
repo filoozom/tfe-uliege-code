@@ -24,7 +24,6 @@ const create = async (node, syncer) => {
     try {
       const dataPoint = await decodeSignedData(value);
       syncer.publish(dataPoint);
-      console.log(dataPoint);
 
       // Close both sides
       await stream.close();

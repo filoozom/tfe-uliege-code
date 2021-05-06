@@ -22,6 +22,7 @@ const create = async (dir) => {
     ...(await readStore(file)),
   };
 
+  // Generic fetch / store / save
   const get = (key) => data[key];
   const set = (key, value) => (data[key] = value);
   const save = async () => writeFile(file, JSON.stringify(data));

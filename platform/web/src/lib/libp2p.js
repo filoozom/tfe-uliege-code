@@ -37,7 +37,7 @@ export const createNode = async () => {
       peerDiscovery: {
         [Bootstrap.tag]: {
           list: [
-            "/ip4/172.28.105.127/tcp/23400/ws/p2p/16Uiu2HAkzMvfQDWGMZ3r3HuhU3sgnZke6S7CyUMHqAkoJqXxi4pK",
+            "/ip4/172.19.249.62/tcp/23400/ws/p2p/16Uiu2HAkzMvfQDWGMZ3r3HuhU3sgnZke6S7CyUMHqAkoJqXxi4pK",
           ],
           interval: 1000,
           enabled: true,

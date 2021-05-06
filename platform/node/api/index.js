@@ -1,7 +1,11 @@
-const fastify = require("fastify")();
+const fastify = require("fastify")({ logger: false });
 const autoload = require("fastify-autoload");
 const path = require("path");
 
+// Register plugins
+fastify.register(require("fastify-sensible"));
+
+// Load all routes
 fastify.register(async (instance, opts) => {
   instance.register(autoload, {
     dir: path.join(__dirname, "routes"),
@@ -9,6 +13,7 @@ fastify.register(async (instance, opts) => {
   });
 });
 
+// Create the API instance
 const create = async (decorate) => {
   for (const [key, value] of Object.entries(decorate)) {
     fastify.decorate(key, value);
