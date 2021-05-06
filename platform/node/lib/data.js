@@ -1,20 +1,9 @@
-const path = require("path");
-const { load } = require("protobufjs");
 const PeerId = require("peer-id");
 
-// Cache
-let PROTO_CACHE;
-
-const getProto = async () => {
-  if (!PROTO_CACHE) {
-    PROTO_CACHE = await load(path.join(__dirname, "../protocols/data.proto"));
-  }
-
-  return PROTO_CACHE;
-};
+// Proto
+const { SignedData, TimestampedMessage } = require("../protocols/proto");
 
 const decodeSignedData = async (raw) => {
-  const { SignedData, TimestampedMessage } = await getProto();
   const { source, signature, data } = SignedData.decode(raw);
   const peerId = await PeerId.createFromPubKey(source);
 

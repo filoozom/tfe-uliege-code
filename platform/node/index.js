@@ -10,6 +10,7 @@ const { create: createStore } = require("./store");
 const ingest = require("./protocols/ingest");
 const sync = require("./protocols/sync");
 const syncDevices = require("./protocols/sync-devices");
+const request = require("./protocols/request");
 
 // API
 const api = require("./api");
@@ -36,6 +37,7 @@ async function startNode(options) {
   // Protocols
   const syncer = await sync.create(node, store);
   const deviceSyncer = await syncDevices.create(store);
+  const requester = await request.create(node, store);
   await ingest.create(node, syncer);
 
   // Start the node
@@ -49,7 +51,7 @@ async function startNode(options) {
   });
 
   // Launch the API
-  const app = await api.create({ store, syncer });
+  const app = await api.create({ store, syncer, requester });
   await app.listen(options.listenApi);
 
   // Add subscriptions

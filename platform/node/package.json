@@ -6,6 +6,11 @@
   "keywords": [],
   "author": "Philippe Schommers <philippe@schommers.be>",
   "license": "UNLICENSED",
+  "scripts": {
+    "proto:data": "pbjs -t static-module -w commonjs -o protocols/proto.js protocols/data.proto",
+    "proto:request": "pbjs -t static-module -w commonjs -o protocols/request/proto.js protocols/request/request.proto",
+    "proto": "run-p proto:data proto:request"
+  },
   "dependencies": {
     "commander": "^7.2.0",
     "config": "^3.3.6",
@@ -24,7 +29,11 @@
     "libp2p-pubsub-peer-discovery": "^3.0.0",
     "libp2p-tcp": "^0.15.4",
     "libp2p-websockets": "^0.15.6",
+    "nanoid": "^3.1.22",
     "protobufjs": "^6.10.2",
     "streaming-iterables": "^5.0.4"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }

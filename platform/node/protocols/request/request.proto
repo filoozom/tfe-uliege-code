@@ -1,9 +1,22 @@
 syntax = "proto3";
 
 message Request {
-  repeated string multiaddresses = 1;
+  string id = 1;
+  repeated string multiAddresses = 2;
+  string channel = 3;
+
   message Query {
     bytes device = 1;
+    uint32 from = 2;
+    uint32 to = 3;
+  }
+}
+
+message Reply {
+  string id = 1;
+
+  message Results {
+    uint32 count = 1;
     uint32 from = 2;
     uint32 to = 3;
   }

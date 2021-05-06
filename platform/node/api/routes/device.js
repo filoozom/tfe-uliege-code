@@ -1,5 +1,5 @@
 module.exports = async (fastify) => {
-  const { store } = fastify;
+  const { store, requester } = fastify;
 
   // Schemas
   const deviceSchema = {
@@ -103,6 +103,31 @@ module.exports = async (fastify) => {
       }
 
       return (store.get(`device:data:${id}`) || []).map(({ data }) => data);
+    }
+  );
+
+  fastify.post(
+    "/:id/request",
+    {
+      schema: {
+        body: {
+          from: { type: "integer" },
+          to: { type: "integer" },
+        },
+        response: {
+          201: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+            },
+          },
+        },
+      },
+    },
+    async ({ params: { id: device }, body }, res) => {
+      const id = await requester.request(device, body);
+      res.status(201);
+      return { id };
     }
   );
 };
