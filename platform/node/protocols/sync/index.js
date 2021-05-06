@@ -4,7 +4,7 @@ const { decodeSignedData } = require("../../lib/data");
 // Functions
 const formatTopic = (deviceId) => `device-${deviceId}`;
 
-const create = async (node, store) => {
+const create = async (node, store, requester) => {
   const storeDataPoint = async (dataPoint) => {
     console.log({ ...dataPoint, peerId: dataPoint.peerId.toB58String() });
 
@@ -43,6 +43,15 @@ const create = async (node, store) => {
   };
 
   const subscribe = async (device) => {
+    // TODO: Differenciate between syncing and requesting
+    // Right now, nodes that sync a particular device also
+    // reply on requests. This makes sense, but the two processes
+    // could be separated.
+    // i.e.: I would like to fetch data from a device but
+    // do not want to make it available to others.
+    requester.subscribe(device);
+
+    // Subscribe
     const topic = formatTopic(device);
     console.log("Subscribing to", topic);
     node.pubsub.on(topic, handler);

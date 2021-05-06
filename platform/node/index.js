@@ -35,9 +35,9 @@ async function startNode(options) {
   });
 
   // Protocols
-  const syncer = await sync.create(node, store);
-  const deviceSyncer = await syncDevices.create(store);
   const requester = await request.create(node, store);
+  const syncer = await sync.create(node, store, requester);
+  const deviceSyncer = await syncDevices.create(store);
   await ingest.create(node, syncer);
 
   // Start the node

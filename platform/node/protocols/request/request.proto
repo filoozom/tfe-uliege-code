@@ -4,6 +4,7 @@ message Request {
   string id = 1;
   repeated string multiAddresses = 2;
   string channel = 3;
+  Query query = 4;
 
   message Query {
     bytes device = 1;
@@ -14,6 +15,7 @@ message Request {
 
 message Reply {
   string id = 1;
+  Results results = 2;
 
   message Results {
     uint32 count = 1;
