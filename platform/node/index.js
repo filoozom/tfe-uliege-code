@@ -38,7 +38,7 @@ async function startNode(options) {
   const requester = await request.create(node, store);
   const syncer = await sync.create(node, store, requester);
   const deviceSyncer = await syncDevices.create(store);
-  await ingest.create(node, syncer);
+  await ingest.create(node, store, syncer);
 
   // Start the node
   await node.start();
