@@ -55,7 +55,7 @@ async function startNode(options) {
   await app.listen(options.listenApi);
 
   // Add subscriptions
-  for (const device of store.get("devices") || []) {
+  for (const device of store.get("subscriptions:devices") || []) {
     syncer.subscribe(device);
   }
 }
