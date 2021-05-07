@@ -59,7 +59,9 @@ const create = async (node, store, requester) => {
   };
 
   const unsubscribe = async (device) => {
-    await node.pubsub.unsubscribe(formatTopic(device));
+    const topic = formatTopic(device);
+    console.log("Unubscribing from", topic);
+    await node.pubsub.unsubscribe(topic);
   };
 
   return {
