@@ -20,8 +20,23 @@ function getHumidity(buffer) {
 
 async function start(options) {
   const node = await createNode(options);
-  const ingestor = await ingest.create(node, options.target);
 
+  // Print peer discovery results
+  node.on("peer:discovery", (peerId) => {
+    console.log(`Found peer ${peerId.toB58String()}`);
+  });
+
+  // Print new connections to peers
+  node.connectionManager.on("peer:connect", (connection) => {
+    console.log(`Connected to ${connection.remotePeer.toB58String()}`);
+  });
+
+  // Print peers disconnecting
+  node.connectionManager.on("peer:disconnect", (connection) => {
+    console.log(`Disconnected from ${connection.remotePeer.toB58String()}`);
+  });
+
+  const ingestor = await ingest.create(node, options.target);
   const server = net.createServer((socket) => {
     socket.on("data", (data) => {
       const temperature = getTemperature(data);
@@ -33,6 +48,9 @@ async function start(options) {
 
   const [host, port] = options.listen.split(":");
   server.listen(parseInt(port), host);
+
+  console.log(`Listening on: ${host}:${port}`);
+  console.log(`Peer ID: ${node.peerId.toB58String()}`);
 }
 
 program
