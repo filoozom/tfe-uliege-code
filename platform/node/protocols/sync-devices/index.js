@@ -49,6 +49,11 @@ const create = async (store) => {
     // Set data in the store
     store.set("events:new-devices:blockNumber", blockNumber);
     store.set("contract:devices", { ...devices, [device.id]: device });
+
+    // Save if up to date
+    if (upToDate) {
+      await store.save();
+    }
   };
 
   const handleEvent = (event) => {
@@ -74,6 +79,7 @@ const create = async (store) => {
       await handleEvent(event);
     }
 
+    // Save the store at the end
     await store.save();
     upToDate = true;
   };
