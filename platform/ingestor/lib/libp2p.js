@@ -74,6 +74,7 @@ const createNode = async (options) => {
         [PubsubPeerDiscovery.tag]: {
           enabled: !options.disablePubsubDiscovery,
           interval: 1000,
+          topics: ["node._iot-platform._peer-discovery._p2p._pubsub"],
         },
         [MDNS.tag]: {
           enabled: !options.disableMdns,

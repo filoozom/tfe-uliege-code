@@ -93,10 +93,27 @@ const createNode = async (options) => {
         [PubsubPeerDiscovery.tag]: {
           enabled: !options.disablePubsubDiscovery,
           interval: 1000,
+          topics: ["node._iot-platform._peer-discovery._p2p._pubsub"],
         },
         [MDNS.tag]: {
           enabled: !options.disableMdns,
           interval: 1000,
+        },
+      },
+      relay: {
+        enabled: true,
+        hop: {
+          enabled: true,
+          active: true,
+        },
+        advertise: {
+          bootDelay: 15 * 60 * 1000,
+          enabled: true,
+          ttl: 30 * 60 * 1000,
+        },
+        autoRelay: {
+          enabled: true,
+          maxListeners: 2,
         },
       },
     },

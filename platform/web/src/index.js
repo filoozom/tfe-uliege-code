@@ -67,6 +67,11 @@ export default function App() {
       console.log(`Disconnected from ${connection.remotePeer.toB58String()}`);
     });
 
+    // Print multi addresses when they change (for circuit relay)
+    node.peerStore.on("change:multiaddrs", ({ multiaddrs }) => {
+      console.log(multiaddrs.toString());
+    });
+
     node.start();
   }, [node]);
 
