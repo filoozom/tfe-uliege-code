@@ -9,6 +9,14 @@ function parseDirectory(dir) {
   return path.resolve(dir);
 }
 
+async function timeoutPromise(promise, ms, error) {
+  return await Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(error), ms)),
+  ]);
+}
+
 module.exports = {
   parseDirectory,
+  timeoutPromise,
 };

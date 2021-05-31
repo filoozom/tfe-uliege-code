@@ -5,9 +5,16 @@ const { multiaddr } = require("multiaddr");
 // Lib
 const { formatProtocol } = require("../../lib/protocols");
 const { writeStream, readStream } = require("../../lib/streams");
+const { timeoutPromise } = require("../../lib/tools");
 
 // Proto
-const { Request, Reply } = require("./proto");
+const {
+  Request,
+  Reply,
+  ReplyData,
+  ReplyConfirm,
+  SignedData,
+} = require("./proto");
 
 // Functions
 const formatTopic = (device) => `request:device:${device}`;
@@ -23,21 +30,37 @@ const create = async (node, store) => {
   node.handle(formatProtocol(REPLY_PROTOCOL), async ({ stream }) => {
     console.log("Got dialed on reply protocol");
 
-    const reader = await readStream(stream);
-    const { value, done } = await reader.next();
-
-    if (done) {
-      stream.reset();
-      return;
-    }
-
     try {
-      const reply = await Reply.decode(value);
-      console.log(reply);
+      const reader = await readStream(stream);
+      const { value: replyRaw } = await reader.next();
+      const { id, results } = await Reply.decode(replyRaw);
+      console.log({ id, results });
+
+      // If the reply contains no results, reset the
+      //  connection, as it should never happen.
+      if (!results.count) {
+        await stream.reset();
+        return;
+      }
+
+      // Simply accept all incoming requests for now
+      // TODO: More advanced protocol if necessary
+      const writer = await writeStream(stream);
+      const confirm = ReplyConfirm.create({ id });
+      const confirmRaw = ReplyConfirm.encode(confirm).finish();
+      writer.write(confirmRaw);
+
+      // Now read the results
+      const { value: replyDataRaw } = await reader.next();
+      const replyData = await ReplyData.decode(replyDataRaw);
+      console.log(replyData);
 
       // Close both sides
+      await writer.end();
       await stream.close();
     } catch (err) {
+      console.log(err);
+
       // On failure, reset the stream
       await stream.reset();
       return;
@@ -56,6 +79,9 @@ const create = async (node, store) => {
     // Received an invalid request (wrong topic)
     // TODO: Add location topics (as opposed to device specific ones)
     if (!validIds.includes(device)) {
+      console.error(
+        `Invalid topic ID (got ${device}, expected ${validIds.join(" or ")}`
+      );
       return;
     }
 
@@ -78,6 +104,9 @@ const create = async (node, store) => {
 
     // If we don't have any data points, abort
     if (!result.length) {
+      console.error(
+        `No data available for device ${device} from ${from} to ${to}`
+      );
       return;
     }
 
@@ -94,6 +123,8 @@ const create = async (node, store) => {
     let peerId;
     for (const address of multiAddresses) {
       const parts = address.split("/");
+      let found;
+
       for (let i = 0; i < parts.length; i++) {
         if (parts[i] === "p2p") {
           // Invalid multi address
@@ -101,21 +132,30 @@ const create = async (node, store) => {
             return;
           }
 
-          // Inconsistent peer ID
-          if (peerId && parts[i + 1] !== peerId) {
-            return;
-          }
-
-          peerId = parts[i + 1];
-          continue;
+          // Make sure we find the last PeerId because there
+          // can be multiple ones because of circuit relays
+          found = parts[i + 1];
         }
+      }
+
+      if (!peerId) {
+        peerId = found;
+      }
+
+      // Inconsistent peer ID
+      else if (found !== peerId) {
+        console.error(`Inconsistent PeerIds found: ${peerId} and ${found}`);
+        return;
       }
     }
 
     // No peer ID found -> abort
     if (!peerId) {
+      console.error("No PeerId found...");
       return;
     }
+
+    console.log(`Adding PeerIds for ${peerId}:\n-`, mas.join("\n- "));
 
     // Add all multi addresses to the peer book
     peerId = PeerId.createFromB58String(peerId);
@@ -130,6 +170,45 @@ const create = async (node, store) => {
     // Write the reply and end the stream
     const writer = await writeStream(stream);
     writer.write(replyRaw);
+
+    // Wait for a ReplyConfirm message
+    const reader = await readStream(stream);
+    const timeoutError = { code: "PROMISE_TIMEOUT" };
+
+    try {
+      const { value: replyConfirmRaw } = await timeoutPromise(
+        reader.next(),
+        5 * 1000,
+        timeoutError
+      );
+      const replyConfirm = ReplyConfirm.decode(replyConfirmRaw);
+
+      if (replyConfirm.id !== id) {
+        console.error(`Inconsistent IDs found: ${replyConfirm.id} and ${id}`);
+        await writer.end();
+        await stream.close();
+        return;
+      }
+    } catch (err) {
+      if (err === timeoutError) {
+        // Reset the stream
+        await stream.reset();
+        return;
+      }
+
+      throw err;
+    }
+
+    const replyData = ReplyData.create({
+      id,
+      results: result.map(({ raw }) => SignedData.decode(Buffer.from(raw))),
+    });
+    const replyDataRaw = ReplyData.encode(replyData).finish();
+
+    console.log(replyData);
+
+    // Send the ReplyData
+    writer.write(replyDataRaw);
     writer.end();
 
     // Close both sides
