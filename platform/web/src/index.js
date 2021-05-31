@@ -52,9 +52,6 @@ export default function App() {
 
     node.on("peer:discovery", async (peerId) => {
       console.log(`Found peer ${peerId.toB58String()}`);
-
-      const conn = await node.dial(peerId);
-      console.log(conn);
     });
 
     // Listen for new connections to peers
@@ -68,8 +65,18 @@ export default function App() {
     });
 
     // Print multi addresses when they change (for circuit relay)
-    node.peerStore.on("change:multiaddrs", ({ multiaddrs }) => {
-      console.log(multiaddrs.toString());
+    node.peerStore.on("change:multiaddrs", ({ peerId, multiaddrs }) => {
+      if (!peerId.isEqual(node.peerId)) {
+        return;
+      }
+
+      console.log("Multiaddrs changed:");
+      for (const ma of multiaddrs) {
+        console.log(
+          "-",
+          ma.encapsulate(`/p2p/${node.peerId.toB58String()}`).toString()
+        );
+      }
     });
 
     node.start();
