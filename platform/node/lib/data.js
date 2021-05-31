@@ -4,7 +4,9 @@ const PeerId = require("peer-id");
 const { SignedData, TimestampedMessage } = require("../protocols/proto");
 
 const decodeSignedData = async (raw) => {
-  const { source, signature, data } = SignedData.decode(raw);
+  const { source, signature, data } = Buffer.isBuffer(raw)
+    ? SignedData.decode(raw)
+    : raw;
   const peerId = await PeerId.createFromPubKey(source);
 
   // Re-encode the TimestampedMessage to check its signature

@@ -6,6 +6,7 @@ const { multiaddr } = require("multiaddr");
 const { formatProtocol } = require("../../lib/protocols");
 const { writeStream, readStream } = require("../../lib/streams");
 const { timeoutPromise } = require("../../lib/tools");
+const { decodeSignedData } = require("../../lib/data");
 
 // Proto
 const {
@@ -53,7 +54,14 @@ const create = async (node, store) => {
       // Now read the results
       const { value: replyDataRaw } = await reader.next();
       const replyData = await ReplyData.decode(replyDataRaw);
-      console.log(replyData);
+
+      // Decode all SignedData. This is done in two steps so that
+      // the first one can throw for each data point before writing
+      // them to the database.
+      const decoded = await Promise.all(
+        replyData.results.map(decodeSignedData)
+      );
+      await Promise.all(decoded.map(store.dataPoint.write));
 
       // Close both sides
       await writer.end();

@@ -26,11 +26,15 @@ const create = async (dir) => {
   const get = (key) => data[key];
   const set = (key, value) => (data[key] = value);
   const save = async () => writeFile(file, JSON.stringify(data));
-
-  return {
+  const store = {
     get,
     set,
     save,
+  };
+
+  return {
+    dataPoint: require("./data-point")(store),
+    ...store,
   };
 };
 
