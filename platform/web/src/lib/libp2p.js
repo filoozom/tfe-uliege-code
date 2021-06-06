@@ -37,6 +37,10 @@ export const createNode = async () => {
       peerDiscovery: {
         [Bootstrap.tag]: {
           list: [
+            // srv02.apyos.com
+            "/dns4/srv02.apyos.com/tcp/23400/ws/p2p/16Uiu2HAmRPg4qGPc3cEdWpMiEbN9qUAv7cTnch6LnpfbySx7nkZv",
+
+            // WSL
             "/ip4/172.25.154.33/tcp/23400/ws/p2p/16Uiu2HAkzMvfQDWGMZ3r3HuhU3sgnZke6S7CyUMHqAkoJqXxi4pK",
           ],
           interval: 1000,

@@ -67,7 +67,10 @@ program
   .option("-M, --disable-mdns", "disable mDNS")
   .option("-B, --disable-bootstrap", "disable bootstrapping")
   .option("-P, --disable-pubsub-discovery", "disable PubSub discovery")
-  .option("-b, --bootstrap [addresses...]", "bootstrap addresses", [])
+  .option("-b, --bootstrap [addresses...]", "bootstrap addresses", [
+    // srv02.apyos.com
+    "/dns4/srv02.apyos.com/tcp/23400/ws/p2p/16Uiu2HAmRPg4qGPc3cEdWpMiEbN9qUAv7cTnch6LnpfbySx7nkZv",
+  ])
   .option(
     "-d, --data-dir <directory>",
     "data directory",
