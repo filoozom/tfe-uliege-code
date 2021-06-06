@@ -80,12 +80,12 @@ program
   .option(
     "-w, --listen-wss <ip:port>",
     "listen address for secure WebSockets (host and port)",
-    "127.0.0.1:23400"
+    "0.0.0.0:23400"
   )
   .option(
     "-t, --listen-tcp <ip:port>",
     "listen address for TCP connections (host and port)",
-    "127.0.0.1:12300"
+    "0.0.0.0:12300"
   )
   .option(
     "-a, --listen-api <ip:port>",

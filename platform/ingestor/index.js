@@ -67,7 +67,7 @@ program
     parseDirectory,
     parseDirectory("~/.iot-platform/ingestor")
   )
-  .option("-l, --listen <host:port>", "listen address", "127.0.0.1:45600")
+  .option("-l, --listen <host:port>", "listen address", "0.0.0.0:45600")
   .requiredOption("-t, --target <multiAddress>", "target node")
   .parse();
 
