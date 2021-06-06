@@ -11,9 +11,9 @@ In general, all image can be ran in a Docker container.
 ### Run the code
 
 ```bash
-$ cd web
-$ docker build -t iot-platform/web .
-$ docker run --rm -p 8080:80 iot-platform/web
+cd web
+docker build -t iot-platform/web .
+docker run --rm -p 8080:80 iot-platform/web
 ```
 
 Then navigate to http://localhost:8080, preferably on the latest stable Chrome version. The website should be opened on localhost or over HTTPS, as required by the Web Crypto API (https://github.com/libp2p/js-libp2p-crypto/blob/master/README.md#web-crypto-api).
@@ -32,10 +32,10 @@ The `ethereum` folder contains all Ethereum smart contracts required by this pla
 ### Deploy the contracts
 
 ```bash
-$ cd ethereum
-$ npm i
-$ npx truffle deploy --network goerli
-$ npx truffle run verify --network goerli Platform
+cd ethereum
+npm i
+npx truffle deploy --network goerli
+npx truffle run verify --network goerli Platform
 ```
 
 ## Comoponents
@@ -43,8 +43,8 @@ $ npx truffle run verify --network goerli Platform
 Each component can be ran in Docker and contains a help command, that shows all available configuration flags:
 
 ```
-$ docker build -t iot-platform/COMPONENT .
-$ docker run --rm iot-platform/COMPONENT --help
+docker build -t iot-platform/COMPONENT .
+docker run --rm iot-platform/COMPONENT --help
 ```
 
 Running the code in Docker makes it easy to spin up a lot of services quickly on the same machine. For example, to launch 100 ephemeral nodes:
@@ -61,9 +61,9 @@ done
 #### Run the code
 
 ```bash
-$ cd sensor
-$ docker build -t iot-platform/sensor .
-$ docker run --rm iot-platform/sensor -i INGESTOR_ADDRESS -t TEMPERATURE -h HUMIDITY
+cd sensor
+docker build -t iot-platform/sensor .
+docker run --rm iot-platform/sensor -i INGESTOR_ADDRESS -t TEMPERATURE -h HUMIDITY
 ```
 
 ### Ingestor
@@ -71,15 +71,15 @@ $ docker run --rm iot-platform/sensor -i INGESTOR_ADDRESS -t TEMPERATURE -h HUMI
 #### Run the code
 
 ```bash
-$ cd ingestor
-$ docker build -t iot-platform/ingestor .
-$ docker run --rm -p 45600:45600 iot-platform/ingestor -t NODE_ADDRESS
+cd ingestor
+docker build -t iot-platform/ingestor .
+docker run --rm -p 45600:45600 iot-platform/ingestor -t NODE_ADDRESS
 ```
 
 In order to keep the identity:
 
 ```
-$ docker run --rm -v $(pwd)/ingestor:/ingestor iot-platform/ingestor -d /ingestor
+docker run --rm -v $(pwd)/ingestor:/ingestor iot-platform/ingestor -d /ingestor
 ```
 
 ### Node
@@ -87,19 +87,19 @@ $ docker run --rm -v $(pwd)/ingestor:/ingestor iot-platform/ingestor -d /ingesto
 #### Run the code
 
 ```bash
-$ cd node
-$ docker build -t iot-platform/node .
-$ docker run --rm -p 12300:12300 -p 23400:23400 iot-platform/node
+cd node
+docker build -t iot-platform/node .
+docker run --rm -p 12300:12300 -p 23400:23400 iot-platform/node
 ```
 
 To access the private REST API, it needs to be bound to all interfaces and a port forwarding rule needs to be added to the Docker command:
 
 ```bash
-$ docker run --rm -p 12300:12300 -p 23400:23400 -p 34500:34500 iot-platform/node -a 0.0.0.0:34500
+docker run --rm -p 12300:12300 -p 23400:23400 -p 34500:34500 iot-platform/node -a 0.0.0.0:34500
 ```
 
 In order to keep the identity:
 
 ```
-$ docker run --rm -v $(pwd)/node:/node iot-platform/node -d /node
+docker run --rm -v $(pwd)/node:/node iot-platform/node -d /node
 ```

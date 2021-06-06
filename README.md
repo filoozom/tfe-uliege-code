@@ -9,10 +9,10 @@ The `ethereum` folder contains the smart contract used as an example in the "Blo
 It can be deployed using the following commands:
 
 ```bash
-$ cd ethereum
-$ npm i
-$ npx truffle deploy --network goerli
-$ npx truffle run verify --network goerli Platform
+cd ethereum
+npm i
+npx truffle deploy --network goerli
+npx truffle run verify --network goerli Platform
 ```
 
 ## Platform
