@@ -1,9 +1,7 @@
 {
   "private": true,
-  "name": "tfe-platform-contracts",
-  "version": "0.0.1",
-  "description": "",
-  "keywords": [],
+  "name": "@iot-platform/contracts",
+  "version": "0.0.0",
   "author": "Philippe Schommers <philippe@schommers.be>",
   "license": "UNLICENSED",
   "dependencies": {

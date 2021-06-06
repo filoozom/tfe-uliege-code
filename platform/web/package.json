@@ -1,8 +1,9 @@
 {
   "private": true,
-  "name": "web",
+  "name": "@iot-platform/web",
   "version": "0.0.0",
-  "license": "MIT",
+  "author": "Philippe Schommers <philippe@schommers.be>",
+  "license": "UNLICENSED",
   "scripts": {
     "build": "preact build",
     "serve": "sirv build --port 8080 --cors --single",

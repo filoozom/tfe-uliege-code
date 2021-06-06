@@ -1,9 +1,7 @@
 {
-  "name": "node",
-  "version": "0.0.1",
-  "description": "",
+  "name": "@iot-platform/ingestor",
+  "version": "0.0.0",
   "main": "index.js",
-  "keywords": [],
   "author": "Philippe Schommers <philippe@schommers.be>",
   "license": "UNLICENSED",
   "dependencies": {
