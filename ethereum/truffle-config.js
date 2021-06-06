@@ -51,7 +51,7 @@ module.exports = {
     test: {
       host: "localhost",
       port: 8545,
-      network_id: "1615900567218",
+      network_id: "123456",
     },
   },
 };

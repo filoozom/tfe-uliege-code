@@ -38,6 +38,15 @@ npx truffle deploy --network goerli
 npx truffle run verify --network goerli Platform
 ```
 
+### Run unit tests
+
+```bash
+cd ethereum
+npm i
+npx ganache-cli -i 123456   # Launches a private Ethereum testnet
+npx truffle test            # Runs the tests on the private testnet
+```
+
 ## Comoponents
 
 Each component can be ran in Docker and contains a help command, that shows all available configuration flags:
