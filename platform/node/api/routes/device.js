@@ -28,6 +28,8 @@ module.exports = async (fastify) => {
     "/",
     {
       schema: {
+        description:
+          "Fetch the list of devices currently registered on the platform",
         response: {
           200: {
             type: "array",
@@ -43,6 +45,8 @@ module.exports = async (fastify) => {
     "/:id",
     {
       schema: {
+        description:
+          "Fetch one device in particular currently registered on the platform",
         response: {
           200: deviceSchema,
         },
@@ -62,6 +66,8 @@ module.exports = async (fastify) => {
     "/:id/last",
     {
       schema: {
+        description:
+          "Fetch the latest locally available Data Point of a particular device",
         response: {
           200: dataSchema,
         },
@@ -87,6 +93,8 @@ module.exports = async (fastify) => {
     "/:id/data",
     {
       schema: {
+        description:
+          "Fetch all the locally available Data Points of a particular device",
         response: {
           200: {
             type: "array",
@@ -110,6 +118,8 @@ module.exports = async (fastify) => {
     "/:id/request",
     {
       schema: {
+        description:
+          "Request data from a device on the peer-to-peer network, with a ranged date query",
         body: {
           from: { type: "integer" },
           to: { type: "integer" },

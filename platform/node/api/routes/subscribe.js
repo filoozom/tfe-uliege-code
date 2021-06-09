@@ -7,6 +7,7 @@ module.exports = async (fastify) => {
     "/",
     {
       schema: {
+        description: "Fetch current device subscriptions",
         response: {
           200: {
             type: "array",
@@ -23,16 +24,17 @@ module.exports = async (fastify) => {
   fastify.post(
     "/",
     {
-      body: {
-        type: "object",
-        properties: {
-          device: { type: "string" },
-        },
-        required: ["device"],
-      },
       schema: {
+        description: "Subscribe to a device to keep it in sync",
         response: {
           201: { type: "null" },
+        },
+        body: {
+          type: "object",
+          properties: {
+            device: { type: "string" },
+          },
+          required: ["device"],
         },
       },
     },
@@ -54,6 +56,7 @@ module.exports = async (fastify) => {
     "/:device",
     {
       schema: {
+        description: "Unsubscribe from a device to longer be kept it in sync",
         response: {
           204: { type: "null" },
         },

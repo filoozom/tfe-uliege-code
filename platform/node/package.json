@@ -16,6 +16,7 @@
     "fastify": "^3.15.0",
     "fastify-autoload": "^3.7.1",
     "fastify-sensible": "^3.1.1",
+    "fastify-swagger": "^4.7.0",
     "it-length-prefixed": "^5.0.2",
     "it-pipe": "^1.1.0",
     "libp2p": "^0.30.12",

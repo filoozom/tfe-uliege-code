@@ -112,3 +112,16 @@ In order to keep the identity:
 ```
 docker run --rm -v $(pwd)/node:/node iot-platform/node -d /node
 ```
+
+### API
+
+The Node contains a private API, that runs on port `34500` by default. The documentation can be accessed directly on the API, at http://localhost:34500/doc. It makes it possible to:
+
+- Fetch the list of devices currently registered on the platform
+- Fetch one device in particular currently registered on the platform
+- Fetch the latest locally available Data Point of a particular device
+- Fetch all the locally available Data Points of a particular device
+- Request data from a device on the peer-to-peer network, with a ranged date query
+- Fetch current device subscriptions
+- Subscribe to a device to keep it in sync
+- Unsubscribe from a device to longer be kept it in sync
